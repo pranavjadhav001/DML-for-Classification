@@ -3,18 +3,18 @@
 This series of experiments is to curb my curiosity on:
 1. How Deep Metric Learning or distance based methods perform on classification tasks?
 2. Does generalization to unseen classes holds true?
-3. Why is Deep Metric Learning that performs exceedingly well for biometrics (Face recognition), isn't used against other image recognition problems?
-4. Are the trade offs worth choosing a distance based approch over a classical classification approach?
+3. Why is Deep Metric Learning that performs exceedingly well for biometrics (Face recognition), isn't used for any other image recognition problems?
+4. What are the trade offs and are they worth choosing a distance based approch over a classical classification approach?
 
 ## Motivation
 
-It all started with a company research project, when my [Manager](https://www.linkedin.com/in/vikascm?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base_contact_details%3BdCInhNbuTaquKbrE39Ll4Q%3D%3D) asked me to take up classification problem but approach in a more of a class agnostic way, in general sense try embedding / DML / distance based methods. Developing a model in this way has certain advantages like, we can add <b> more data and classes </b>without retraining everytime.This approach seemed promising, considering that established <b>Face recognition technology </b>demonstrates its feasibility, yet its widespread adoption remains limited.With the advent of Vector Databases, I believe we will more seeing towards this shift. 
+It all started with a company research project, when my [Manager](https://www.linkedin.com/in/vikascm?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base_contact_details%3BdCInhNbuTaquKbrE39Ll4Q%3D%3D) asked me to take up classification problem but approach in a more of a class agnostic way, in general sense try embedding / DML / distance based methods. Developing a model in this way has certain advantages like, we can add <b> more data and classes </b>without retraining everytime.This approach seemed promising, considering that established <b>Face recognition technology </b>demonstrates its feasibility, yet its widespread adoption remains limited.With the advent of Vector Databases, I believe we will be seeing more shift towards this. 
 
 ## Experiment Comparison & Tracking
-I'm using Weights & Biases MLops tool to track and compare all experiments. The goal is to stick to predefined metrics and not change over the course of experimentation to give apples to apples comparison.<br/>  [Link to W&B experimentation page](https://wandb.ai/pranavjadhav001/embedding_based_classification?nw=nwuserpranavjadhav001)
+I'm using <b>Weights & Biases</b> MLops tool to track and compare all experiments. The goal is to stick to predefined metrics and not change over the course of experimentation to give apples to apples comparison.<br/>  [Link to W&B experimentation page](https://wandb.ai/pranavjadhav001/embedding_based_classification?nw=nwuserpranavjadhav001)
 
 ## Dataset
-Decent amount of time was spent on choosing the right dataset. I was looking at datasets particularly used for fine grained image classification problems with decent intra and inter class variance. I also wanted dataset with decent number of classes since unseen class validation split would reduce training classes. It has been known that having large no. of classes during training improves model generalizes capabilities and really brings out the best candidate for loss metric. CUB-200-2011 Dataset ticked all the above requirements. It has around 200 classes with approx 60 images for each class. It is commonly used to quantify DML tasks. Other datasets considered were : Cars196, Standford Online Products, In-shop Clothes retrieval , Hotel-50k.<br/>
+Decent amount of time was spent on choosing the right dataset. I was looking at datasets particularly used for fine grained image classification problems with decent intra and inter class variance. I also wanted dataset with decent number of classes since unseen class validation split would reduce training classes. It has been known that having large no. of classes during training improves model generalization capabilities.<br/> CUB-200-2011 Dataset ticked all the above requirements. It has around 200 classes with approx 60 images for each class. It is commonly used to quantify DML tasks. Other datasets considered were : Cars196, Standford Online Products, In-shop Clothes retrieval , Hotel-50k.<br/>
 Dataset [Link](https://paperswithcode.com/dataset/cub-200-2011)<br/>
 ### Download Dataset using CLI
 ```bash
@@ -36,7 +36,7 @@ All experiments followed these details, unless explicitly mentioned:
 - fixed seed 42
 - image shape 224x224x3
 - image train test split 0.2
-- unseen class train test split, last 20 classes from 180-200 were kept for unseen class metrics
+- unseen class train test split, last 20 classes were kept for unseen class metrics
 - metric for test accuracy precision@1
 - Augmentation is consistent wherever mentioned:
     - Train Transform
@@ -59,7 +59,7 @@ All experiments followed these details, unless explicitly mentioned:
    <tbody>
       <tr id="ee31b7f0-d1e2-4899-ac2d-e76bbc631317">
          <td id="ss;p" class="" ><sub>EPSHN_euclidean_resnet18</sub></td>
-         <td id="S]C:" class="" ><sub>- Euclidean Distance metric<br/>- used <a href="#references">EPSHN</a> as loss <br/>- Architecture chosen as Resnet 18 with Imagenet1k Pretrained weights<br/>- Used Adam optimizer<br/>- Embedding Dimension of 128<br/><br/></sub></td>
+         <td id="S]C:" class="" ><sub>- used Euclidean Distance metric<br/>- used <a href="#references">EPSHN</a> as loss <br/>- Architecture chosen as Resnet 18 with Imagenet1k Pretrained weights<br/>- Used Adam optimizer<br/>- Embedding Dimension of 128<br/><br/></sub></td>
          <td id="`UGS" class="" ><sub>- Test Accuracy of 50 % was achieved </sub></td>
       </tr>
       <tr id="b0b47476-297c-4387-a27c-fe30d9f64d1b">
@@ -70,12 +70,13 @@ All experiments followed these details, unless explicitly mentioned:
       <tr id="077f1041-4613-43d3-a235-e712d033c05b">
          <td id="ss;p" class="" ><sub>EPSHN_cosine_resnet18_sgd</sub></td>
          <td id="S]C:" class="" ><sub>- same as EPSHN_cosine_resnet18<br/>- used SGD optimizer instead of adam<br/><br/></sub></td>
-         <td id="`UGS" class="" ><sub>- around 25% gain in test accuracy<br/>- SGD generalizes really well, making model more robust towards unknown data distribution and classes<br/></sub></td>
+         <td id="`UGS" class="" ><sub>- around 25% gain in test accuracy w.r.t EPSHN_cosine_resnet18<br/>- SGD generalizes really well, making model more robust towards unknown data distribution and classes<br/></sub></td>
       </tr>
       <tr id="0e0b3293-da57-42c0-b9e4-a8950ece422c">
          <td id="ss;p" class="" ><sub>EPSHN_cosine_resnet18_sgd_aug</sub></td>
          <td id="S]C:" class="" ><sub>- same as EPSHN_cosine_resnet18_sgd<br/>- added train and test augmentations for generalization<br/></sub></td>
-         <td id="`UGS" class="" ><sub>- around 3% test accuracy gains<br/>- This will be treated as Baseline<br/>- a drop of 20% precision/accuracy was noted for model performance b/w with and without classes included<br/></sub></td>
+         <td id="`UGS" class="" ><sub>- around 3% test accuracy gains<br/>- This will be treated as Baseline<br/>- a drop of 20% accuracy was noted b/w <a href="#Precison Drop for models trained with & without unseen classes
+"models trained with and without unseen classes<br/></sub></td>
       </tr>
       <tr id="ecb11b81-2a59-4fe7-881f-f9521f83e8f6">
          <td id="ss;p" class="" ><sub>EPSHN_cosine_frozenBN_resnet18_sgd_aug</sub></td>
@@ -95,7 +96,7 @@ All experiments followed these details, unless explicitly mentioned:
       <tr id="61990a8f-0a1f-4426-90f7-3740f7703ac9">
          <td id="ss;p" class="" ><sub>EPSHN_cosine_resnet18x512_sgd_aug</sub></td>
          <td id="S]C:" class="" ><sub>- same as EPSHN_cosine_resnet18_sgd_aug<br/>- Embedding Dimension of 512 was chosen instead of 128<br/></sub></td>
-         <td id="`UGS" class="" ><sub>- Increasing embedding dim doesn’t have effect on test accuracy<br/>- only a drop of 10% precision/accuracy was noted for model performance b/w with and without classes included<br/>- for unseen class performs better than baseline<br/></sub></td>
+         <td id="`UGS" class="" ><sub>- Increasing embedding dim doesn’t have effect on test accuracy<br/>- only a drop of 10% accuracy was noted b/w models trained with and without unseen classes<br/>- for unseen class performs better than baseline<br/></sub></td>
       </tr>
       <tr id="53b6f915-85a2-462d-b873-f31b54b62e7f">
          <td id="ss;p" class="" ><sub>EPSHN_cosine_resnet18+skipConnHead_sgd_aug</sub></td>
@@ -103,14 +104,14 @@ All experiments followed these details, unless explicitly mentioned:
          <td id="`UGS" class="" ><sub>- Adding skip connection head doesn’t have effect on test accuracy</sub></td>
       </tr>
       <tr id="6d42ccf5-3933-452b-a3b2-31ccc55a3010">
-         <td id="ss;p" class="" ><sub>EPSHN_cosine_resnet18+1dBN_sgd_aug</sub></td>
+         <td id="ss;p" class="" ><sub><a href="#references">EPSHN_cosine_resnet18+1dBN_sgd_aug</a></sub></td>
          <td id="S]C:" class="" ><sub>- same as EPSHN_cosine_resnet18_sgd_aug<br/>- Adding a 1d Batch Normalization on top of model<br/></sub></td>
-         <td id="`UGS" class="" ><sub>- Adding 1D Batch Norm layer doesn’t have effect on test accuracy<br/>- only a drop of 10% precision/accuracy was noted for model performance b/w with and without classes included<br/>- for unseen class performs better than baseline<br/></sub></td>
+         <td id="`UGS" class="" ><sub>- Adding 1D Batch Norm layer doesn’t have effect on test accuracy<br/>- only a drop of 10% accuracy was noted b/w models trained with and without unseen classes<br/>- for unseen class performs better than baseline<br/></sub></td>
       </tr>
       <tr id="05045bd3-5851-458e-a254-c881a7979bca">
          <td id="ss;p" class="" ><sub>EPSHN_cosine_resnet50_sgd_aug</sub></td>
          <td id="S]C:" class="" ><sub>- same as EPSHN_cosine_resnet18_sgd_aug<br/>- instead of Resnet 18 , Resnet 50 was chosen with pretrained imagenet1k weights<br/></sub></td>
-         <td id="`UGS" class="" ><sub>- Adding more layers / parameters has a direct correlation on performance<br/>- an increase of 11% test accuracy was noted w.r.t baseline<br/>- only a drop of 10% precision/accuracy was noted for model performance b/w with and without classes included<br/></sub></td>
+         <td id="`UGS" class="" ><sub>- Adding more layers / parameters has a direct correlation on performance<br/>- an increase of 11% test accuracy was noted w.r.t baseline<br/>- only a drop of 10% accuracy was noted b/w models trained with and without unseen classes<br/></sub></td>
       </tr>
       <tr id="807ca97a-d35b-438f-8400-e6d638c481d4">
          <td id="ss;p" class="" ><sub>ProxyNCA_cosine_resnet18_sgd_aug</sub></td>
@@ -135,8 +136,14 @@ All experiments followed these details, unless explicitly mentioned:
    </tbody>
 </table>
 
+## Plots & Curves
+### Test accuracy (only 10 runs can be shown simultaneously)
+![Test Accuracy Curves](assets/test_acc_curves.png)
+### Precison Drop for models trained with & without unseen classes
+![Precision Drop Bar Plot](assets/precision_drop_unseen_classes.png)
 
 ## How an experiment has been conducted
+Each Experiment has been divided into <b>two phase training</b>, One with all classes included, the other excluding unseen classes. The steps are as follows:
 1. Create experiment config , initialize wandb run
 2. Initialize random seed to a fixed value which is common for all experiments 
 3. Load image dataset for all 200 classes , split into train test datasets with 0.2 ratio stratified at label level
@@ -148,6 +155,25 @@ All experiments followed these details, unless explicitly mentioned:
 9. All the steps(4,5,6,7) remain the same as first phase training, even during evaluation, entire dataset was loaded including the last 20 classes 
 10. Get precision drop for last 20 unseen classes for both the models; call it "comparison_unseen_classes_metrics" Table, average leads to "precision_drop_unseen_classes" scalar.
 11. Get precision drop for all classes for both the models; call it "comparison_seen_classes_metrics" Table, average leads to "precision_drop_seen_classes" scalar.
+
+## Explainability
+- To understand and see where the model is looking at, implemented Grad Cam equivalent for embedding networks from this [paper](https://arxiv.org/abs/2402.00909). You can see the results here at this [repo](https://github.com/pranavjadhav001/embedding-grad-cam-pytorch). Model from <b>EPSHN_cosine_resnet50_sgd_aug</b> experiment has been used.<br/>
+
+| ```Grad-CAM``` | ```Vanilla BackProp```  | ```Guided BackProp``` | ```Guided Grad-CAM``` |
+| --- | --- | --- | --- |
+| ![Grad-CAM](assets/0-gradcam-model.layer4_180.png) | ![Vanilla backpropagation](assets/0-vanilla.png) | ![Guided backpropagation](assets/0-guided_180.png) | ![Guided Grad-CAM](assets/0-guided-gradcam-model.layer4_180.png) |
+
+- To visualize embeddings for all classes for entire dataset, I've used [FiftyOne](https://docs.voxel51.com/tutorials/image_embeddings.html?highlight=embeddings) to plot using umap and see corresponding images associated. It shows how visually similar classes cluster around one another. This also tells us about the spread(variance) of test embeddings vs train embeddings. 
+![Embedding Visualization, along with samples](assets/fiftyone_zoomed.png)
+- Used [FAISS](https://github.com/facebookresearch/faiss) to find best and closest matches for unseen classes. This offers insights that closest one may not be always the best and hence always determine the best class by majority voting for closest <b>n samples</b>.<br/>
+```
+true label: 005.Crested_Auklet
+predicted label: 024.Red_faced_Cormorant
+Classes of Top 10 closest samples : 24, 24, 5, 24, 5, 5, 5, 5, 24, 5
+```
+| ```True Class(005.Crested_Auklet)``` | ```Predicted Class(024.Red_faced_Cormorant)```  |
+|:--------------------------------------:|:-------------------------------------------------:|
+| ![Closest Sample=1](assets/faiss-evidence1.png)|![Closest Sample=1](assets/faiss-evidence2.png)|
 
 ## What to look for
 More comprehensive plots and numbers were created for each experiment to better compare against each other.These plots, tables and scalars are only present for experiments that showed potential(decent test accuracy)
@@ -162,11 +188,6 @@ More comprehensive plots and numbers were created for each experiment to better 
 - <b>"comparison_unseen_classes_metrics" table</b> : table which contains rows of class name, precision @ 1 for 200 class model, precision @ 1 for 180 class model
 - <b>"precision_drop_unseen_classes" scalar</b> : average value of unseen 20 classes(precision @ 1 for 200 class model  - precision @ 1 for 180 class model)   
 - <b>"precision_drop_all_classes" scalar</b> : average value of 200 classes(precision @ 1 for 200 class model  - precision @ 1 for 180 class model)
-
-## Explainability
-- To understand and see where the model is looking at, implemented Grad Cam equivalent for embedding networks from this [paper](https://arxiv.org/abs/2402.00909). You can see the results here at this [repo](https://github.com/pranavjadhav001/embedding-grad-cam-pytorch). Model from <b>EPSHN_cosine_resnet50_sgd_aug</b> experiment has been used.
-- To visualize embeddings for all classes for entire dataset, I've used [FiftyOne](https://docs.voxel51.com/tutorials/image_embeddings.html?highlight=embeddings) to plot using umap and see corresponding images associated. It shows how visually similar classes cluster around one another. This also tells us about the spread(variance) of test embeddings vs train embeddings. 
-- Used [FAISS](https://github.com/facebookresearch/faiss) to find best and closest matches for unseen classes. This offers insights that closest one may not be always the best and hence always determine the best class by majority voting for closest <b>n samples</b>.
 
 ## References
 - [Resnet-18 1D batchnorm Arcface architecture](https://github.com/ronghuaiyang/arcface-pytorch/blob/master/models/resnet.py)
